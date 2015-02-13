@@ -29,3 +29,10 @@ This library uses the implicit chaining capabilities of Lodash.
 
 
 Released under MIT license
+
+## NodeJS usage:
+
+var _ = require('lodash');
+require('lodash-math')(_);
+
+_.range(15).mean();
