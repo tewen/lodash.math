@@ -1,0 +1,46 @@
+{
+  "name": "lodash-math",
+  "version": "0.0.1",
+  "description": "Lo-dash extension providing math / stats operations on collections.",
+  "homepage": "https://github.com/jvonmitchell/lodash.math",
+  "icon": "https://lodash.com/icon.svg",
+  "license": "MIT",
+  "main": "lodash.math.js",
+  "keywords": [
+    "modules",
+    "stdlib",
+    "util",
+    "lodash",
+    "math",
+    "mixin"
+  ],
+  "author": {
+    "name": "Jason Mitchell",
+    "email": "jvonmitchell@gmail.com",
+    "url": "http://vimque.com"
+  },
+  "contributors": [
+    {
+      "name": "Bruno Heridet",
+      "url": "http://delapouite.com"
+    },
+    {
+      "name": "Jason Mitchell",
+      "email": "jvonmitchell@gmail.com",
+      "url": "http://vimque.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jvonmitchell/lodash.math"
+  },
+  "scripts": {
+    
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/jvonmitchell/lodash.math"
+  },
+  "_id": "lodash-math@0.0.1",
+  "_from": "lodash-math@0.0.1"
+}
