@@ -36,3 +36,14 @@ var _ = require('lodash');
 require('lodash-math')(_);
 
 _.range(15).mean();
+
+###or
+
+A lodash will be prodived if none is given.  It will not corrupt the main module.  
+var _math = require('lodash-math')();
+
+###or
+
+Other _ providers can be used.  
+var _ = require('underscore');  
+require('lodash-math')(_);
