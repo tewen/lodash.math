@@ -32,7 +32,7 @@ Released under MIT license
 
 ## NodeJS usage:
 
-var _ = require('lodash');
+var _ = require('lodash');  
 require('lodash-math')(_);
 
 _.range(15).mean();
