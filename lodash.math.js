@@ -16,9 +16,9 @@
     }
     
     math.weightedAverage = function(values,weights) {
-     var weightProduct=math.sum(weights);
+     var weightSum=math.sum(weights);
      weights = lo.map(weights,function(weight) {
-       return weight/weightProduct;
+       return weight/weightSum;
      });
      return math.sum(
              lo.map(
