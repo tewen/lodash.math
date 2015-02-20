@@ -1,7 +1,7 @@
 (function () {
 
   function mixin_loader(lodash) {
-
+    
     var math = this.math = {};
 
     // Arithmetic mean
@@ -139,7 +139,11 @@
     };
 
     // add methods to Underscore.js namespace
+    if(lodash === undefined) {    
+      lodash = require('lodash').runInContext();
+    }
     lodash.mixin(math);
+    return lodash;
   }
 
   if(module === undefined) {
