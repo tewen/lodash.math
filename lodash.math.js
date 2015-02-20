@@ -1,14 +1,115 @@
 (function () {
-
+  
+  
   function mixin_loader(lodash) {
-    
     var math = this.math = {};
+    
+    function objKey2Array(obj,key) {
+      var arr;
+      if (lodash.isArray(obj) && typeof obj[0] === 'number') {
+        arr = obj;
+      } else {
+        key = key || 'value';
+        arr = lodash.pluck(obj, key);
+      }
+      return arr;
+    }
+    
+    math.weightedAverage = function(values,weights) {
+     var weightProduct=math.sum(weights);
+     weights = lo.map(weights,function(weight) {
+       return weight/weightProduct;
+     });
+     return math.sum(
+             lo.map(
+              lo.zip(values,weights),
+              function(pair) {
+               return pair[0]*pair[1];
+              }));
+    };
+    
+    // Product
+    // math.product([1,2,3,4,5,6])
+    //   => 720 aka 6!
+    math.product = function(obj, key) {
+     var arr=objKey2Array(obj, key);
+     var product=1;
+     for(var i=0;i<arr.length;++i) {
+      product*=arr[i];
+     }
+     return product;
+    };
 
+    // Greatest common divisor
+    // math.gcd([4,6,12])
+    //   => 2
+    math.gcd = function(obj, key) {
+      var arr = objKey2Array(obj, key);
+      if(arr.length == 2) {
+        var n=arr[0],
+         m=arr[1];
+        if (n === 0) {
+          return m;
+        }
+        while (m) {if (n > m) {n -= m;} else {m -= n;}}
+        return n;
+      }
+      else {
+       var arrCopy=arr.concat();
+       return math.gcd(arrCopy.splice(0,1),arr);
+      }
+    };
     // Arithmetic mean
     // math.mean([1,2,3])
     //   => 2
     math.mean = math.ave = math.average = function(obj, key) {
-      return math.sum(obj, key) / lodash.size(obj);
+      try { 
+        return math.sum(obj, key) / lodash.size(obj);
+      }
+      catch(e) {
+        //Overflow or underflow.  Let's break things up a bit
+        var arr = objKey2Array(obj,key);
+        if(arr.length<4) {
+          //Breaking things down further won't help if we are chunking the way we are.
+          //We need to do this manually;
+          if(arr.length === 2) {
+            //We are down to two numbers and those two numbers can't be summed.
+            //How to average numbers without summing and using the alu less.
+            return arr[0]+(arr[1]-arr[0])/2;
+          }
+          if(arr.length === 3) {
+            //Reducing alu usage is not so easy with three.
+            return arr[0]/3 + arr[1]/3 + arr[2]/3;
+          }
+        }
+        //To simplify things we need to chunk this thing as a mutiple of the length (no remainder at end) so we don't need weighted averages.
+        //To reduce the likelyhood of another overflow we want to get close to the square root of the length.
+        //This minimizes the largest grouping we have to average.
+        var chunkSize=Math.ceil(Math.sqrt(arr.length));
+        while(arr.length % chunkSize) {
+         --chunkSize;
+        }
+        if(chunkSize != 1) {
+         return math.mean(
+                 lodash.map(
+                  lodash.chunk(arr, chunkSize),
+                  math.mean));
+        }
+        else {
+          //We have a prime length.  We can't break it into multiple even chunks other than of length one which gets us nowhere.
+          //We need to do a weighted average of smaller sets;
+          //For now split the array in roughly two and take a weighted average of their averages.
+          //Copy arr
+          var arrCopy = arr.concat();
+          //Weighted average of the two halves.  Floored halfway point is >>> 1.
+          //Mutate the array while we get that slice so that we can just pass it again.
+          //Weighted average is of form [values],[weights];
+          return math.weightedAverage(
+           [ math.mean(arrCopy.splice(0,arrCopy.length >>> 1 )),
+             math.mean(arrCopy)],
+           [arr.length-arrCopy.length,arrCopy.length]);
+        }
+      }
     };
 
     // math.median([1,2,3,4])
@@ -73,16 +174,18 @@
     // math.sum([{b: 4},{b: 5},{b: 6}], 'b')
     //   => 15
     math.sum = function(obj, key) {
-      var arr;
-      if (lodash.isArray(obj) && typeof obj[0] === 'number') {
-        arr = obj;
-      } else {
-        key = key || 'value';
-        arr = lodash.pluck(obj, key);
-      }
+      var arr = objKey2Array(obj,key);
       var val = 0, i;
-      for (i = 0; i < arr.length; i++)
-        val += (arr[i]-0);
+      for (i = 0; i < arr.length; i++) {
+        var nextValue = arr[i]-0;
+        if(val > 0 && nextValue > Number.MAX_VALUE - val) {
+         throw new Error('Overflow');
+        }
+        if(val < 0 && nextValue < Number.MIN_VALUE - val) {
+         throw new Error('Underflow');
+        }
+        val += nextValue;
+      }
       return val;
     };
 
@@ -111,13 +214,7 @@
     // math.zscore([1,2,3])
     //   => [-1.224744871391589, 0, 1.224744871391589]
     math.zscore = function(obj, key) {
-      var arr;
-      if (lodash.isArray(obj) && typeof obj[0] === 'number') {
-        arr = obj;
-      } else {
-        key = key || 'value';
-        arr = lodash.pluck(obj, key);
-      }
+      var arr = objKey2Array(obj,key);
 
       var mean = lodash.mean(arr),
           sigma = lodash.stdDeviation(arr),
