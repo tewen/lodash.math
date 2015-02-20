@@ -1,7 +1,7 @@
 {
   "name": "lodash-math",
-  "version": "0.0.1",
-  "description": "Lo-dash extension providing math / stats operations on collections.",
+  "version": "0.0.2",
+  "description": "lodash extension providing math / stats operations on collections.",
   "homepage": "https://github.com/jvonmitchell/lodash.math",
   "icon": "https://lodash.com/icon.svg",
   "license": "MIT",
