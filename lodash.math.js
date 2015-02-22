@@ -3,7 +3,9 @@
   
   function mixin_loader(lodash) {
     var math = this.math = {};
-    
+    //Used by many functions.
+    //Allows them to be invoked as _.func(array) or _.func(object,key)
+    //For functions that only take one option this might aswell be used.
     function objKey2Array(obj,key) {
       var arr;
       if (lodash.isArray(obj) && typeof obj[0] === 'number') {
@@ -14,7 +16,10 @@
       }
       return arr;
     }
-    
+    //Weighted Average
+    //Takes from [values],[weights];
+    //[2,3],[2,1]
+    //   => 2.3333...
     math.weightedAverage = function(values,weights) {
      var weightSum=math.sum(weights);
      weights = lo.map(weights,function(weight) {
