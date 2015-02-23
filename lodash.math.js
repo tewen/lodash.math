@@ -3,9 +3,7 @@
   
   function mixin_loader(lodash) {
     var math = this.math = {};
-    //Used by many functions.
-    //Allows them to be invoked as _.func(array) or _.func(object,key)
-    //For functions that only take one option this might aswell be used.
+    
     function objKey2Array(obj,key) {
       var arr;
       if (lodash.isArray(obj) && typeof obj[0] === 'number') {
@@ -16,10 +14,7 @@
       }
       return arr;
     }
-    //Weighted Average
-    //Takes from [values],[weights];
-    //[2,3],[2,1]
-    //   => 2.3333...
+    
     math.weightedAverage = function(values,weights) {
      var weightSum=math.sum(weights);
      weights = lo.map(weights,function(weight) {
@@ -127,6 +122,28 @@
       return (sorted.length % 2) ? sorted[middle - 1] : (sorted[middle - 1.5] + sorted[middle - 0.5]) / 2;
     };
 
+    // Mode / Modes
+    // math.mode([2,2,3,3,15,4])
+    //   => [2,3]
+    // optionalFunction should return a string and can control clustering.
+    math.mode = math.modes = function(array,optionalFunction) {
+     var clusterFunction = optionalFunction || function(a) { return a.toString() },
+      numberOfPerValue = lodash.countBy(array,clusterFunction),
+      highestRepeatingValues = [],
+      numberRepeating = 0;
+     console.log('numberOfPerValue',numberOfPerValue);
+     lodash.each(Object.keys(numberOfPerValue), function(valueInArray) {
+       var numberRepeatingHere = numberOfPerValue[valueInArray]
+       if(numberRepeatingHere > numberRepeating) {
+         highestRepeatingValues = [];
+         numberRepeating = numberRepeatingHere;
+       }
+       if(numberRepeatingHere === numberRepeating) {
+         highestRepeatingValues.push(valueInArray);
+       }
+     });
+     return highestRepeatingValues;
+    }
     // Power, exponent
     // math.pow(2,3)
     //   => 8
