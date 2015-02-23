@@ -1,6 +1,6 @@
 {
   "name": "lodash-math",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "lodash extension providing math / stats operations on collections.",
   "homepage": "https://github.com/jvonmitchell/lodash.math",
   "icon": "https://lodash.com/icon.svg",
