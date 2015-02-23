@@ -59,6 +59,30 @@
        return math.gcd(arrCopy.splice(0,1),arr);
       }
     };
+    
+    // Least common multiple
+    // math.lcm([3,4,2])
+    //   => 12
+    math.lcm = function(obj, key) {
+      var array = objKey2Array(obj, key),
+       n = array.length,
+       a = Math.abs(array[0]);
+      for(var i = 1; i < n; ++i) {
+        var b = Math.abs(array[i]),
+         c = a;
+        while (a && b) {
+          if(a > b) {
+           a%=b;
+          }
+          else {
+           b%=a;
+          }
+        }
+        a = Math.abs(c * array[i]) / (a + b);
+      }
+      return a;
+    };
+    
     // Arithmetic mean
     // math.mean([1,2,3])
     //   => 2
@@ -127,13 +151,13 @@
     //   => [2,3]
     // optionalFunction should return a string and can control clustering.
     math.mode = math.modes = function(array,optionalFunction) {
-     var clusterFunction = optionalFunction || function(a) { return a.toString() },
+     var clusterFunction = optionalFunction || function(a) { return a.toString(); },
       numberOfPerValue = lodash.countBy(array,clusterFunction),
       highestRepeatingValues = [],
       numberRepeating = 0;
      console.log('numberOfPerValue',numberOfPerValue);
      lodash.each(Object.keys(numberOfPerValue), function(valueInArray) {
-       var numberRepeatingHere = numberOfPerValue[valueInArray]
+       var numberRepeatingHere = numberOfPerValue[valueInArray];
        if(numberRepeatingHere > numberRepeating) {
          highestRepeatingValues = [];
          numberRepeating = numberRepeatingHere;
@@ -143,7 +167,8 @@
        }
      });
      return highestRepeatingValues;
-    }
+    };
+    
     // Power, exponent
     // math.pow(2,3)
     //   => 8
