@@ -1,6 +1,5 @@
 (function () {
   
-  
   function mixin_loader(lodash) {
     var math = this.math = {};
     
@@ -16,28 +15,28 @@
     }
     
     math.weightedAverage = function(values,weights) {
-     var weightSum=math.sum(weights);
-     weights = lo.map(weights,function(weight) {
-       return weight/weightSum;
-     });
-     return math.sum(
-             lo.map(
-              lo.zip(values,weights),
-              function(pair) {
-               return pair[0]*pair[1];
-              }));
+      var weightSum=math.sum(weights);
+      weights = lo.map(weights,function(weight) {
+        return weight/weightSum;
+      });
+      return math.sum(
+              lo.map(
+               lo.zip(values,weights),
+               function(pair) {
+                return pair[0]*pair[1];
+               }));
     };
     
     // Product
     // math.product([1,2,3,4,5,6])
     //   => 720 aka 6!
     math.product = function(obj, key) {
-     var arr=objKey2Array(obj, key);
-     var product=1;
-     for(var i=0;i<arr.length;++i) {
-      product*=arr[i];
-     }
-     return product;
+      var arr=objKey2Array(obj, key),
+       product=1;
+      for(var i=0;i<arr.length;++i) {
+        product*=arr[i];
+      }
+      return product;
     };
 
     // Greatest common divisor
@@ -55,8 +54,8 @@
         return n;
       }
       else {
-       var arrCopy=arr.concat();
-       return math.gcd(arrCopy.splice(0,1),arr);
+        var arrCopy=arr.slice();
+        return math.gcd(arrCopy.splice(0,1),arr);
       }
     };
     
@@ -72,10 +71,10 @@
          c = a;
         while (a && b) {
           if(a > b) {
-           a%=b;
+            a%=b;
           }
           else {
-           b%=a;
+            b%=a;
           }
         }
         a = Math.abs(c * array[i]) / (a + b);
@@ -111,13 +110,13 @@
         //This minimizes the largest grouping we have to average.
         var chunkSize=Math.ceil(Math.sqrt(arr.length));
         while(arr.length % chunkSize) {
-         --chunkSize;
+          --chunkSize;
         }
         if(chunkSize != 1) {
-         return math.mean(
-                 lodash.map(
-                  lodash.chunk(arr, chunkSize),
-                  math.mean));
+          return math.mean(
+                  lodash.map(
+                   lodash.chunk(arr, chunkSize),
+                   math.mean));
         }
         else {
           //We have a prime length.  We can't break it into multiple even chunks other than of length one which gets us nowhere.
@@ -151,32 +150,29 @@
     //   => [2,3]
     // optionalFunction should return a string and can control clustering.
     math.mode = math.modes = function(array,optionalFunction) {
-     var clusterFunction = optionalFunction || function(a) { return a.toString(); },
-      numberOfPerValue = lodash.countBy(array,clusterFunction),
-      highestRepeatingValues = [],
-      numberRepeating = 0;
-     console.log('numberOfPerValue',numberOfPerValue);
-     lodash.each(Object.keys(numberOfPerValue), function(valueInArray) {
-       var numberRepeatingHere = numberOfPerValue[valueInArray];
-       if(numberRepeatingHere > numberRepeating) {
-         highestRepeatingValues = [];
-         numberRepeating = numberRepeatingHere;
-       }
-       if(numberRepeatingHere === numberRepeating) {
-         highestRepeatingValues.push(valueInArray);
-       }
-     });
-     return highestRepeatingValues;
+      var clusterFunction = optionalFunction || function(a) { return a.toString(); }
+      var max = 0,
+       mode = [],
+       counted = lodash.countBy(array,clusterFunction);
+       max = lodash.max(lodash.values(counted));
+      lodash.forIn(counted, function(v,k){
+        if(v === max) {
+          mode.push(parseFloat(k));
+        }
+      });
+      return mode;
     };
     
     // Power, exponent
     // math.pow(2,3)
     //   => 8
     math.pow = math.power = function(x, n) {
-       if (lodash.isNumber(x))
-          return Math.pow(x, n);
-       if (lodash.isArray(x))
-          return lodash.map(x, function(i) { return lodash.pow(i, n); });
+      if (lodash.isNumber(x)) {
+        return Math.pow(x, n);
+      }
+      if (lodash.isArray(x)) {
+        return lodash.map(x, function(i) { return lodash.pow(i, n); });
+      }
     };
 
     // Round
@@ -221,15 +217,15 @@
     // math.sum([{b: 4},{b: 5},{b: 6}], 'b')
     //   => 15
     math.sum = function(obj, key) {
-      var arr = objKey2Array(obj,key);
-      var val = 0, i;
-      for (i = 0; i < arr.length; i++) {
+      var arr = objKey2Array(obj,key),
+       val = 0;
+      for (var i = 0; i < arr.length; i++) {
         var nextValue = arr[i]-0;
         if(val > 0 && nextValue > Number.MAX_VALUE - val) {
-         throw new Error('Overflow');
+          throw new Error('Overflow');
         }
         if(val < 0 && nextValue < Number.MIN_VALUE - val) {
-         throw new Error('Underflow');
+          throw new Error('Underflow');
         }
         val += nextValue;
       }
@@ -291,9 +287,9 @@
   }
 
   if(module === undefined) {
-   mixin_loader(_);
+    mixin_loader(_);
   }
   else {
-   module.exports = mixin_loader;
+    module.exports = mixin_loader;
   }
 })();
