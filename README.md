@@ -53,5 +53,3 @@ Other _ providers can be used.
 var _ = require('underscore');  
 require('lodash-math')(_);
 _.mode([1,2,2.2,3,4,3],Math.round);  //Yields [2,3]
-
-## Example
