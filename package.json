@@ -1,6 +1,6 @@
 {
   "name": "lodash-math",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "lodash extension providing math / stats operations on collections.",
   "homepage": "https://github.com/jvonmitchell/lodash.math",
   "icon": "https://lodash.com/icon.svg",
@@ -30,6 +30,9 @@
       "url": "http://vimque.com"
     }
   ],
+  "dependencies": {
+    "lodash":"*"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/jvonmitchell/lodash.math"
