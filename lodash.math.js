@@ -2,10 +2,7 @@
   
   function mixin_loader(lodash) {
     var math = this.math = {};
-    if(lodash === undefined) {    
-      lodash = require('lodash').runInContext();
-    }
-   
+    
     function objKey2Array(obj,key) {
       var arr;
       if (lodash.isArray(obj) && typeof obj[0] === 'number') {
@@ -18,13 +15,13 @@
     }
     
     math.weightedAverage = function(values,weights) {
-      var weightSum=lodash.sum(weights);
-      weights = lodash.map(weights,function(weight) {
+      var weightSum=math.sum(weights);
+      weights = lo.map(weights,function(weight) {
         return weight/weightSum;
       });
-      return lodash.sum(
-              lodash.map(
-               lodash.zip(values,weights),
+      return math.sum(
+              lo.map(
+               lo.zip(values,weights),
                function(pair) {
                 return pair[0]*pair[1];
                }));
@@ -90,7 +87,7 @@
     //   => 2
     math.mean = math.ave = math.average = function(obj, key) {
       try { 
-        return internalSum(obj, key) / lodash.size(obj);
+        return math.sum(obj, key) / lodash.size(obj);
       }
       catch(e) {
         //Overflow or underflow.  Let's break things up a bit
@@ -219,7 +216,7 @@
     //   => 6
     // math.sum([{b: 4},{b: 5},{b: 6}], 'b')
     //   => 15
-    var internalSum = function(obj, key) {
+    math.sum = function(obj, key) {
       var arr = objKey2Array(obj,key),
        val = 0;
       for (var i = 0; i < arr.length; i++) {
@@ -234,10 +231,6 @@
       }
       return val;
     };
-    
-    if(lodash.sum === undefined) {
-     math.sum = internalSum;
-    }
 
     // math.transpose(([1,2,3], [4,5,6], [7,8,9]])
     //   => [[1,4,7], [2,5,8], [3,6,9]]
@@ -284,52 +277,16 @@
       }
       return newarr;
     };
-    
-    math.shannon = function(obj,key) {
-     var array = objKey2Array(obj,key),
-      counts = lodash.values(lodash.countBy(array));
-     return (Math.log(array.length) - lodash.sum(lodash.map(counts,function (n) {
-                                                               return n*Math.log(n);
-                                      }))/array.length
-            )/Math.log(2);
-    };
-    
-    //More safe with huge data sequences.
-    //This is more theoretical because x*ln|x| is nearly linear.
-    //As long as you don't have data with ~10^305 symbols you're good to use the faster one.
-    //Well log10(number of symbols) + log10(number of kinds of symbols) should stay a margin away from 305 or we will go over 10^308 somewhere. 
-    math.shannon2 = function(obj,key) {
-     var array = objKey2Array(obj,key),
-      counts = lodash.values(lodash.countBy(array));
-     return -lodash.sum(
-       lodash.map(
-         lodash.map(
-           counts,
-           function(item) {
-             return item/array.length;
-           }),
-         function(item) {
-           return item*Math.log(item)/Math.log(2);
-         }));
-    };
-    
-    math.shannonMinimumBits = function(obj,key) {
-     var array = objKey2Array(obj,key),
-      counts = lodash.values(lodash.countBy(array));
-     return (array.length*Math.log(array.length) - lodash.sum(lodash.map(counts,function (n) {
-                                                               return n*Math.log(n);
-                                                   }))
-            )/Math.log(2);
-    };
-    
 
     // add methods to Underscore.js namespace
-    
+    if(lodash === undefined) {    
+      lodash = require('lodash').runInContext();
+    }
     lodash.mixin(math);
     return lodash;
   }
 
-  if(module === undefined) {
+  if(window !== undefined) {
     mixin_loader(_);
   }
   else {
