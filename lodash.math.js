@@ -329,10 +329,5 @@
     return lodash;
   }
 
-  if(window !== undefined) {
-    mixin_loader(_);
-  }
-  else {
     module.exports = mixin_loader;
-  }
 })();
